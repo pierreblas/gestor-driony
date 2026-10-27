@@ -1,0 +1,24 @@
+node_modules
+.next
+.git
+.gitignore
+.vscode
+.idea
+*.log
+npm-debug.log*
+
+# Datos y secretos locales: nunca dentro de la imagen
+.env
+.env.*
+!.env.example
+!.env.production.example
+prisma/*.db
+prisma/*.db-journal
+data
+
+Dockerfile
+docker-compose.yml
+.dockerignore
+README.md
+AGENTS.md
+CLAUDE.md

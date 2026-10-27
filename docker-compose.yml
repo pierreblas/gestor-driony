@@ -1,0 +1,25 @@
+# Uso:
+#   cp .env.production.example .env.production   (y edítalo)
+#   docker compose --env-file .env.production up -d --build
+#
+# El puerto del servidor se elige con APP_PORT en .env.production (por defecto 3100).
+# Dentro del contenedor la app usa el 3000, que no choca con el 3000 del servidor.
+
+services:
+  driony:
+    build: .
+    image: driony:latest
+    container_name: driony
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      # La base de datos vive en el volumen, fuera de la imagen.
+      DATABASE_URL: "file:/app/data/driony.db"
+      PORT: "3000"
+    ports:
+      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-3100}:3000"
+    volumes:
+      - driony-data:/app/data
+
+volumes:
+  driony-data:

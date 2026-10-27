@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// role: ADMIN | GESTOR | MIEMBRO
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      String   @default("MIEMBRO")
+  jobTitle  String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  passwordHash    String?
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+
+  sessions    Session[]
+  authTokens  AuthToken[]
+  memberships TeamMember[]
+  tasks       Task[]       @relation("AssignedTasks")
+  ledTeams    Team[]       @relation("TeamLead")
+  activities  Activity[]
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  colorSlot   Int      @default(1)
+  leadId      String?
+  lead        User?    @relation("TeamLead", fields: [leadId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+
+  members TeamMember[]
+  tasks   Task[]
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  userId   String
+  teamId   String
+  joinedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+}
+
+// status: PENDIENTE | EN_PROGRESO | EN_REVISION | COMPLETADA
+// priority: BAJA | MEDIA | ALTA | URGENTE
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  status      String    @default("PENDIENTE")
+  priority    String    @default("MEDIA")
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  teamId     String
+  team       Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  assigneeId String?
+  assignee   User?   @relation("AssignedTasks", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  activities Activity[]
+
+  @@index([status])
+  @@index([teamId])
+  @@index([assigneeId])
+  @@index([dueDate])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  type      String
+  message   String
+  createdAt DateTime @default(now())
+
+  taskId String?
+  task   Task?   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// purpose: PASSWORD (activate account or reset password)
+model AuthToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  purpose   String    @default("PASSWORD")
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// Single row (id = 1). The SMTP password is stored encrypted with AUTH_SECRET.
+model Settings {
+  id            Int      @id @default(1)
+  smtpHost      String?
+  smtpPort      Int?
+  smtpSecure    Boolean  @default(false)
+  smtpUser      String?
+  smtpPassEnc   String?
+  smtpFromName  String?
+  smtpFromEmail String?
+  appUrl        String?
+  // Copilot (Claude API). The key is stored encrypted with AUTH_SECRET.
+  aiApiKeyEnc   String?
+  aiModel       String?
+  updatedAt     DateTime @updatedAt
+}
