@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { AccountForm } from "@/components/settings/AccountForm";
+import { ReplayTourButton } from "@/components/tour/ReplayTourButton";
 
 export const metadata: Metadata = { title: "Mi cuenta" };
 
@@ -19,11 +20,14 @@ export default async function CuentaPage() {
         title="Mi cuenta"
         description={`${ROLE_LABEL[role]}${me.isMaster ? " (cuenta master)" : ""}. ${ROLE_DESCRIPTION[role]}`}
         action={
-          <form action={logout}>
-            <Button type="submit" variant="secondary">
-              Cerrar sesión
-            </Button>
-          </form>
+          <>
+            <ReplayTourButton />
+            <form action={logout}>
+              <Button type="submit" variant="secondary">
+                Cerrar sesión
+              </Button>
+            </form>
+          </>
         }
       />
       <Card className="px-5 py-5">

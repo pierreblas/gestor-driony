@@ -76,7 +76,7 @@ export function MyTasks({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5" data-tour="task-list">
         {groups
           .filter((g) => g.tasks.length > 0)
           .map((group) => (

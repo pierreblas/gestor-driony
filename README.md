@@ -12,7 +12,9 @@ Gestor de equipos, tareas y usuarios con panel de resumen. Construido con Next.j
 - **Personas** (`/usuarios`): roles, puesto, equipos, carga de trabajo y si la cuenta está activada. Al añadir a alguien le llega un correo para activar su cuenta; el botón del sobre reenvía el acceso.
 - **Ajustes** (`/ajustes`): servidor de correo SMTP con botones para Gmail, Outlook y Zoho, y un botón para enviarte un correo de prueba.
 - **Mi cuenta** (`/cuenta`): cambiar nombre y contraseña, y cerrar la sesión en otros dispositivos.
-- **Copiloto (IA)**: botón «Copiloto» en Mis tareas, Todas las tareas y cada equipo. Escribes lo que hay que hacer y propone tareas con equipo, responsable, prioridad y fecha, o pulsas «Sugerir para Operaciones» (o cualquier equipo) y propone ideas que no repitan lo que ya hay. Nada se crea hasta que revisas, editas y pulsas «Crear». Usa Claude, de Anthropic; la clave se pone en Ajustes.
+- **Copiloto (IA)**: botón «Copiloto» en Mis tareas, Todas las tareas y cada equipo. Escribes lo que hay que hacer y propone tareas con equipo, responsable, prioridad y fecha, o pulsas «Sugerir para Operaciones» (o cualquier equipo) y propone ideas que no repitan lo que ya hay. Nada se crea hasta que revisas, editas y pulsas «Crear». Funciona con Claude (Anthropic) o con ChatGPT (OpenAI): eliges el proveedor y pones la clave en Ajustes.
+- **Recorrido guiado**: la primera vez que alguien entra, un recorrido de 1 minuto resalta cada parte de la pantalla según su rol. Se repite con el botón de ayuda (?) de la barra lateral o desde Mi cuenta.
+- **Guías paso a paso en Ajustes** para configurar Gmail y conseguir las claves de Anthropic y OpenAI.
 - Avisos breves al guardar y un diálogo claro antes de borrar cualquier cosa.
 - La actividad registra quién hizo cada cambio.
 - Tema claro y oscuro (sigue el sistema, con interruptor manual).
@@ -39,8 +41,8 @@ npm run dev          # abre http://localhost:3000
 Después abre http://localhost:3000. La primera vez, la pantalla de entrada te lleva a **configurar la cuenta master** (nombre y contraseña). Luego:
 
 1. Ve a **Ajustes** y configura el correo SMTP. Con Gmail necesitas una [contraseña de aplicación](https://myaccount.google.com/apppasswords) (requiere verificación en dos pasos), servidor `smtp.gmail.com`, puerto `465`, SSL.
-2. Pulsa «Enviarme un correo de prueba».
-3. Opcional: en **Ajustes > Copiloto (IA)** pega una clave de API de Anthropic (créala en console.anthropic.com > API Keys), elige el modelo y pulsa «Probar conexión». Cada uso se cobra en esa cuenta de Anthropic.
+2. Escribe a quién enviar la prueba en «Enviar la prueba a» y pulsa «Enviar prueba».
+3. Opcional: en **Ajustes > Copiloto (IA)** elige Claude o ChatGPT, pega la clave (cada sección explica cómo conseguirla), guarda y pulsa «Probar conexión». Cada uso se cobra en la cuenta de ese proveedor.
 4. En **Personas**, pulsa el sobre de cada persona para enviarle su correo de activación. Si el correo aún no está configurado, verás un enlace para copiar y enviárselo por otro medio.
 
 Variables de `.env`:
@@ -51,7 +53,8 @@ Variables de `.env`:
 | `AUTH_SECRET`  | Cifra la contraseña SMTP guardada. Si lo cambias, vuelve a escribirla en Ajustes |
 | `MASTER_EMAIL` | Correo de la cuenta master                                        |
 | `APP_URL`      | Dirección usada en los enlaces de los correos                     |
-| `ANTHROPIC_API_KEY` | Opcional. Clave del copiloto si no se pone en Ajustes (la de Ajustes tiene prioridad) |
+| `ANTHROPIC_API_KEY` | Opcional. Clave de Anthropic si no se pone en Ajustes (la de Ajustes tiene prioridad) |
+| `OPENAI_API_KEY` | Opcional. Clave de OpenAI si no se pone en Ajustes (la de Ajustes tiene prioridad) |
 
 Para volver a empezar con datos limpios (**borra todas las cuentas y contraseñas**):
 
@@ -126,7 +129,7 @@ src/lib/
   actions/             Server Actions (crear, editar, eliminar, acceso, ajustes)
   auth/                Contraseñas, sesiones, enlaces y roles
   email.ts             Envío de correos y plantillas
-  ai.ts                Copiloto: llamada a Claude y formato de las propuestas
+  ai.ts                Copiloto: llamadas a Anthropic u OpenAI y formato de las propuestas
   validation.ts        Esquemas zod
   constants.ts         Estados, prioridades, roles y colores
 ```

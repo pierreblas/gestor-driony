@@ -366,6 +366,34 @@ body {
   }
 }
 
+/* Guided tour */
+.tour-spotlight {
+  box-shadow:
+    0 0 0 3px var(--accent),
+    0 0 0 9999px rgb(10 16 28 / 0.55);
+  transition:
+    top 220ms ease,
+    left 220ms ease,
+    width 220ms ease,
+    height 220ms ease;
+}
+.tour-card {
+  animation: tour-in 200ms ease-out;
+}
+@keyframes tour-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour-spotlight,
+  .tour-card {
+    transition: none;
+    animation: none;
+  }
+}
+
 /* Scrollbars (subtle) */
 * {
   scrollbar-width: thin;

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { requireUser } from "@/lib/auth/session";
 import { CurrentUserProvider } from "@/components/layout/CurrentUserProvider";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { ProductTour } from "@/components/tour/ProductTour";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           <div className="mx-auto w-full max-w-[1320px] px-4 pb-24 pt-6 sm:px-6 lg:px-10 lg:pt-10">{children}</div>
         </main>
       </div>
+      <ProductTour role={user.role} autoStart={!user.tutorialSeen} />
     </CurrentUserProvider>
   );
 }

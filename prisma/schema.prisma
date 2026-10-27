@@ -20,6 +20,7 @@ model User {
   passwordHash    String?
   emailVerifiedAt DateTime?
   lastLoginAt     DateTime?
+  tutorialSeenAt  DateTime?
 
   sessions    Session[]
   authTokens  AuthToken[]
@@ -121,17 +122,21 @@ model AuthToken {
 
 // Single row (id = 1). The SMTP password is stored encrypted with AUTH_SECRET.
 model Settings {
-  id            Int      @id @default(1)
-  smtpHost      String?
-  smtpPort      Int?
-  smtpSecure    Boolean  @default(false)
-  smtpUser      String?
-  smtpPassEnc   String?
-  smtpFromName  String?
-  smtpFromEmail String?
-  appUrl        String?
+  id              Int      @id @default(1)
+  smtpHost        String?
+  smtpPort        Int?
+  smtpSecure      Boolean  @default(false)
+  smtpUser        String?
+  smtpPassEnc     String?
+  smtpFromName    String?
+  smtpFromEmail   String?
+  appUrl          String?
   // Copilot (Claude API). The key is stored encrypted with AUTH_SECRET.
-  aiApiKeyEnc   String?
-  aiModel       String?
-  updatedAt     DateTime @updatedAt
+  aiApiKeyEnc     String?
+  aiModel         String?
+  // anthropic | openai
+  aiProvider      String   @default("anthropic")
+  openaiApiKeyEnc String?
+  openaiModel     String?
+  updatedAt       DateTime @updatedAt
 }

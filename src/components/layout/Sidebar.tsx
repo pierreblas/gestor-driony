@@ -6,6 +6,7 @@ import {
   CircleCheck,
   LayoutDashboard,
   ListChecks,
+  CircleHelp,
   LogOut,
   Settings,
   UsersRound,
@@ -17,6 +18,22 @@ import { ROLE_LABEL, isUserRole } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/Avatar";
 import { ThemeToggle } from "./ThemeToggle";
+import { startTour } from "@/components/tour/ProductTour";
+
+function HelpButton() {
+  return (
+    <button
+      type="button"
+      data-tour="help"
+      onClick={startTour}
+      aria-label="Ver el recorrido guiado"
+      title="Ver el recorrido guiado"
+      className="grid h-9 w-9 place-items-center rounded-[10px] text-brand-muted transition-colors hover:bg-brand-2 hover:text-brand-ink"
+    >
+      <CircleHelp className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden />
+    </button>
+  );
+}
 
 type NavItem = { href: string; label: string; icon: LucideIcon; roles: string[] };
 
@@ -46,6 +63,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
           <span className="font-display text-[22px] font-semibold tracking-tight">Driony</span>
         </Link>
         <div className="flex items-center gap-1 lg:hidden">
+          <HelpButton />
           <ThemeToggle />
           <form action={logout}>
             <button
@@ -70,6 +88,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
                 <li key={item.href} className="shrink-0">
                   <Link
                     href={item.href}
+                    data-tour={item.href === "/" ? "nav-resumen" : `nav-${item.href.slice(1)}`}
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[15px] font-medium transition-colors",
@@ -114,7 +133,10 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
               Cerrar sesión
             </button>
           </form>
-          <ThemeToggle />
+          <div className="flex items-center gap-1">
+            <HelpButton />
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </aside>

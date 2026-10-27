@@ -55,7 +55,7 @@ export function QuickAdd({ meId, teams }: { meId: string; teams: TeamOption[] })
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card px-4 py-4 sm:px-5">
+    <form onSubmit={handleSubmit} data-tour="quick-add" className="card px-4 py-4 sm:px-5">
       <label htmlFor="quick-add" className="mb-2 block text-[14px] font-semibold text-ink">
         Añadir una tarea
       </label>

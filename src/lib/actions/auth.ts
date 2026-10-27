@@ -237,3 +237,10 @@ export async function signOutEverywhere(): Promise<ActionState> {
   await createSession(me.id);
   return { ok: true, message: "Se cerró la sesión en tus otros dispositivos." };
 }
+
+/** Remember that this person finished or skipped the guided tour. */
+export async function markTutorialSeen(): Promise<void> {
+  const me = await getSessionUser();
+  if (!me) return;
+  await prisma.user.update({ where: { id: me.id }, data: { tutorialSeenAt: new Date() } });
+}

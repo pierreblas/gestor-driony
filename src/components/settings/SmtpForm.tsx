@@ -8,6 +8,7 @@ import type { ActionState } from "@/lib/validation";
 import { Button } from "@/components/ui/Button";
 import { Field, FormError } from "@/components/ui/Field";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { ExtLink, HowTo } from "./HowTo";
 
 export type SmtpFormValues = {
   smtpHost: string;
@@ -26,12 +27,21 @@ const PRESETS = [
   { label: "Zoho", host: "smtp.zoho.com", port: 465, ssl: true },
 ];
 
-export function SmtpForm({ initial, configured }: { initial: SmtpFormValues; configured: boolean }) {
+export function SmtpForm({
+  initial,
+  configured,
+  adminEmail,
+}: {
+  initial: SmtpFormValues;
+  configured: boolean;
+  adminEmail: string;
+}) {
   const [state, dispatch, pending] = useActionState<ActionState, FormData>(saveSmtpSettings, null);
   const [testing, startTest] = useTransition();
   const [host, setHost] = useState(initial.smtpHost);
   const [port, setPort] = useState(initial.smtpPort ? String(initial.smtpPort) : "");
   const [security, setSecurity] = useState(initial.smtpSecure ? "ssl" : "starttls");
+  const [testTo, setTestTo] = useState(adminEmail);
 
   useEffect(() => {
     if (state?.ok && state.message) toast(state.message);
@@ -54,7 +64,7 @@ export function SmtpForm({ initial, configured }: { initial: SmtpFormValues; con
 
   function test() {
     startTest(async () => {
-      toastResult(await sendTestEmail());
+      toastResult(await sendTestEmail(testTo));
     });
   }
 
@@ -189,20 +199,59 @@ export function SmtpForm({ initial, configured }: { initial: SmtpFormValues; con
         />
       </Field>
 
+      <HowTo
+        title="Cómo configurarlo con Gmail, paso a paso"
+        steps={[
+          <>
+            Activa la verificación en dos pasos de la cuenta de Google en{" "}
+            <ExtLink href="https://myaccount.google.com/signinoptions/twosv">myaccount.google.com</ExtLink>. Sin ella no
+            aparecen las contraseñas de aplicación.
+          </>,
+          <>
+            Abre <ExtLink href="https://myaccount.google.com/apppasswords">Contraseñas de aplicación</ExtLink>, escribe
+            «Driony» y pulsa Crear. Copia las 16 letras, sin espacios.
+          </>,
+          <>Aquí pulsa el botón «Gmail»: rellena servidor smtp.gmail.com, puerto 465 y SSL.</>,
+          <>En Usuario y en Correo remitente pon tu dirección de Gmail completa. En Contraseña, las 16 letras.</>,
+          <>
+            En «Dirección de la aplicación» pon la dirección con la que entra la gente, por ejemplo
+            https://tareas.tudominio.com.
+          </>,
+          <>Pulsa «Guardar configuración», escribe a quién enviar la prueba y pulsa «Enviar prueba».</>,
+        ]}
+        footer="¿Otro proveedor? Pide a tu empresa de correo el servidor SMTP, el puerto y el tipo de seguridad, y usa tu usuario y contraseña de correo."
+      />
+
       <FormError message={message} />
 
-      <div className="flex flex-wrap items-center justify-end gap-2 border-t border-line pt-4">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={test}
-          loading={testing}
-          disabled={!configured}
-          title={configured ? undefined : "Guarda la configuración primero"}
-        >
-          <Send className="h-4 w-4" aria-hidden />
-          Enviarme un correo de prueba
-        </Button>
+      <div className="flex flex-col gap-3 border-t border-line pt-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-1 flex-col gap-1.5 sm:max-w-sm">
+          <label htmlFor="smtp-test-to" className="text-[13.5px] font-medium text-ink">
+            Enviar la prueba a
+          </label>
+          <div className="flex gap-2">
+            <input
+              id="smtp-test-to"
+              type="email"
+              className="control"
+              value={testTo}
+              onChange={(e) => setTestTo(e.target.value)}
+              placeholder="correo@ejemplo.com"
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={test}
+              loading={testing}
+              disabled={!configured || !testTo.trim()}
+              title={configured ? undefined : "Guarda la configuración primero"}
+            >
+              <Send className="h-4 w-4" aria-hidden />
+              Enviar prueba
+            </Button>
+          </div>
+          {!configured ? <p className="text-[12.5px] text-muted">Guarda la configuración para poder probarla.</p> : null}
+        </div>
         <Button type="submit" loading={pending}>
           Guardar configuración
         </Button>

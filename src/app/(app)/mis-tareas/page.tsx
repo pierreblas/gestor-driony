@@ -48,7 +48,10 @@ export default async function MisTareasPage() {
     <div className="mx-auto max-w-3xl">
       <p className="text-[14px] font-medium text-ink-2">{formatLongDate(now)}</p>
       <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-[30px] font-semibold leading-tight tracking-tight text-ink sm:text-[36px]">
+        <h1
+          data-tour="nav-mis-tareas"
+          className="font-display text-[30px] font-semibold leading-tight tracking-tight text-ink sm:text-[36px]"
+        >
           Hola, {firstName(me.name)}
         </h1>
         <CopilotButton teams={manager ? allTeams : myTeams} users={formUsers} aiReady={aiReady} />

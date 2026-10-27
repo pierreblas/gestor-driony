@@ -62,6 +62,7 @@ export const getSessionUser = cache(async () => {
           email: true,
           role: true,
           active: true,
+          tutorialSeenAt: true,
           memberships: { select: { teamId: true } },
         },
       },
@@ -88,6 +89,7 @@ export const getSessionUser = cache(async () => {
     email: user.email,
     role: master ? "ADMIN" : user.role,
     isMaster: master,
+    tutorialSeen: Boolean(user.tutorialSeenAt),
     teamIds: user.memberships.map((m) => m.teamId),
   };
 });

@@ -40,7 +40,7 @@ export function CopilotButton({
   const close = useCallback(() => setOpen(false), []);
   return (
     <>
-      <Button variant={variant} onClick={() => setOpen(true)}>
+      <Button variant={variant} onClick={() => setOpen(true)} data-tour="copilot">
         <Sparkles className="h-4 w-4" aria-hidden />
         Copiloto
       </Button>
@@ -71,7 +71,7 @@ function NotConfigured() {
       <p className="mt-3 text-[15px] font-medium text-ink">El copiloto aún no está activado</p>
       <p className="mx-auto mt-1 max-w-sm text-[14px] text-ink-2">
         {me?.role === "ADMIN"
-          ? "Añade una clave de API de Anthropic en Ajustes para empezar a usarlo."
+          ? "Añade una clave de Anthropic o de OpenAI en Ajustes para empezar a usarlo."
           : "Pide a la administración que añada la clave de API en Ajustes."}
       </p>
       {me?.role === "ADMIN" ? (
